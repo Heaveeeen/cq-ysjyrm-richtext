@@ -1,0 +1,45 @@
+{
+    "name": "CQYR",
+    "scopeName": "source.cqyr",
+    "fileTypes": [".cqyr.txt"],
+    "patterns": [
+        {
+            "match": "(\\{)([^}]*?)(\\$)([^}]*?)(\\})",
+            "captures": {
+                "1": { "name": "keyword.control.ruby-annotation-begin.cqyr" },
+                "2": { "name": "string.ruby-annotation-bottom.cqyr" },
+                "3": { "name": "keyword.control.ruby-annotation-separator.cqyr" },
+                "4": { "name": "string.ruby-annotation-top.cqyr" },
+                "5": { "name": "keyword.control.ruby-annotation-end.cqyr" }
+            }
+        },
+        {
+            "match": "\\{",
+            "name": "invalid.illegal.ruby-annotation-begin.cqyr"
+        },
+        {
+            "match": "\\}",
+            "name": "invalid.illegal.ruby-annotation-end.cqyr"
+        },
+        {
+            "match": "\\$",
+            "name": "invalid.illegal.ruby-annotation-separator.cqyr"
+        },
+        {
+            "match": "(\\*\\*)(.*?)(\\*\\*)",
+            "captures": {
+                "1": { "name": "keyword.control.bold.begin.cqyr" },
+                "2": { "name": "markup.bold.cqyr" },
+                "3": { "name": "keyword.control.bold.end.cqyr" }
+            }
+        },
+        {
+            "match": "\\*\\*",
+            "name": "invalid.illegal.bold-delimiter.cqyr"
+        },
+        {
+            "match": "(?<!https?:)//.*?(//|$)",
+            "name": "comment.line.double-slash.cqyr"
+        }
+    ]
+}

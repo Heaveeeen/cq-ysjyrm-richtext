@@ -1,0 +1,57 @@
+{
+    "name": "cq-ysjyrm-richtext",
+    "displayName": "cq-ysjyrm-richtext",
+    "description": "个人自用，为CQYSJYRM-zh-trans中的richText语法设计的语法高亮插件",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.120.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [],
+    "main": "./out/extension.js",
+    "contributes": {
+        "languages": [
+            {
+                "id": "cqyr",
+                "aliases": ["CQYR", "cqyr"],
+                "extensions": [".cqyr.txt"],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "cqyr",
+                "scopeName": "source.cqyr",
+                "path": "./syntaxes/cqyr.tmLanguage.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "cq-ysjyrm-richtext.checkSyntaxForWholeWorkspace",
+                "title": "Check Syntax for Whole Workspace"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src",
+        "test": "vscode-test"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.120.0",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "22.x",
+        "@typescript-eslint/eslint-plugin": "^8.45.0",
+        "@typescript-eslint/parser": "^8.45.0",
+        "eslint": "^9.36.0",
+        "typescript": "^5.9.3",
+        "@vscode/test-cli": "^0.0.11",
+        "@vscode/test-electron": "^2.5.2"
+    }
+}
+
