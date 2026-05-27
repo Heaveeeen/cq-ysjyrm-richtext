@@ -2,7 +2,7 @@
     "name": "cq-ysjyrm-richtext",
     "displayName": "cq-ysjyrm-richtext",
     "description": "个人自用，为CQYSJYRM-zh-trans中的richText语法设计的语法高亮插件",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^1.120.0"
     },

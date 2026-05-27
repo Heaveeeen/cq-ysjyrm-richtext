@@ -14,7 +14,7 @@ export function activate(context: vsc.ExtensionContext) {
 	const diagnosticCollection = vsc.languages.createDiagnosticCollection();
 
 	async function findAndReportSyntaxErrorFromUri(uri: vsc.Uri) {
-		if (uri.fsPath.endsWith("_bilingual.cqyr.txt")) { return; }
+		if (uri.fsPath.endsWith("_bilingual.cqyr.txt") || !uri.fsPath.endsWith(".cqyr.txt")) { return; }
 		const errs: vsc.Diagnostic[] = [];
 		const doc = await vsc.workspace.openTextDocument(uri);
 		const txt = doc.getText().replace(annotationReg, sub => " ".repeat(sub.length)).replace(boldReg, sub => " ".repeat(sub.length));
