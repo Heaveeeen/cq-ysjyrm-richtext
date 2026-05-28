@@ -2,7 +2,7 @@
     "name": "cq-ysjyrm-richtext",
     "displayName": "cq-ysjyrm-richtext",
     "description": "个人自用，为CQYSJYRM_zh_trans中的richText语法设计的语法服务插件",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "engines": {
         "vscode": "^1.120.0"
     },
