@@ -1,14 +1,18 @@
 {
     "name": "cq-ysjyrm-richtext",
     "displayName": "cq-ysjyrm-richtext",
-    "description": "个人自用，为CQYSJYRM-zh-trans中的richText语法设计的语法高亮插件",
-    "version": "0.0.2",
+    "description": "个人自用，为CQYSJYRM_zh_trans中的richText语法设计的语法服务插件",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.120.0"
     },
     "categories": [
         "Other"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Heaveeeen/cq-ysjyrm-richtext.git"
+    },
     "activationEvents": [],
     "main": "./out/extension.js",
     "contributes": {
@@ -30,7 +34,7 @@
         "commands": [
             {
                 "command": "cq-ysjyrm-richtext.checkSyntaxForWholeWorkspace",
-                "title": "Check Syntax for Whole Workspace"
+                "title": "CQYR: Check Syntax for Whole Workspace"
             }
         ]
     },
