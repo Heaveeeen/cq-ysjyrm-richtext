@@ -38,6 +38,10 @@
             "name": "invalid.illegal.bold-delimiter.cqyr"
         },
         {
+            "match": "[“”‘’]",
+            "name": "keyword.control.chinese-quote.cqyr"
+        },
+        {
             "match": "(?<!https?:)//.*?(//|$)",
             "name": "comment.line.double-slash.cqyr"
         }

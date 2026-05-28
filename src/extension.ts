@@ -54,7 +54,7 @@ export function activate(context: vsc.ExtensionContext) {
 			timeOut = setTimeout(() => {
 				checkSyntax();
 				timeOut = null;
-			}, 500);
+			}, 300);
 		};
 	})();
 
