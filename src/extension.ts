@@ -1,34 +1,51 @@
 import * as vsc from 'vscode';
 
-export interface CqyrSyntaxErr {
-	message: string,
-	uri: vsc.Uri,
-	range: vsc.Range,
-}
-
-const annotationReg = /\{[^\{\$\}]*?\$[^\{\$\}]*?\}/g;
-const boldReg = /\*\*.*?\*\*/g;
-const IllegalReg = /[\{\$\}]|\*\*/g;
+// const annotationReg = /\{[^\{\$\}]*?\$[^\{\$\}]*?\}/g;
+// const boldReg = /\*\*.*?\*\*/g;
+// const chineseQuoteReg = /“[^“”]*?”/g;
+const validReg = /(\{[^\{\$\}]*?\$[^\{\$\}]*?\})|(\*\*.*?\*\*)|(“[^“”]*?”)/g;
+const invalidCharReg = /[\{\$\}]|\*\*/g;
+const warnQuoteReg = /[“”‘’]/g;
 
 export function activate(context: vsc.ExtensionContext) {
 	const diagnosticCollection = vsc.languages.createDiagnosticCollection();
 
-	async function findAndReportSyntaxErrorFromUri(uri: vsc.Uri) {
-		if (uri.fsPath.endsWith("_bilingual.cqyr.txt") || !uri.fsPath.endsWith(".cqyr.txt")) { return; }
-		const errs: vsc.Diagnostic[] = [];
-		const doc = await vsc.workspace.openTextDocument(uri);
-		const txt = doc.getText().replace(annotationReg, sub => " ".repeat(sub.length)).replace(boldReg, sub => " ".repeat(sub.length));
-		for (const match of txt.matchAll(IllegalReg)) {
+	function matchAllForDoc(options: {
+		txt: string, doc: vsc.TextDocument, reg: RegExp,
+		callback: ({ match, range }: { match: RegExpExecArray, range: vsc.Range }) => unknown,
+	}) {
+		const { txt, doc, reg, callback } = options;
+		for (const match of txt.matchAll(reg)) {
 			const startPos = doc.positionAt(match.index);
 			const endPos = doc.positionAt(match.index + match[0].length);
 			const range = new vsc.Range(startPos, endPos);
-			errs.push(new vsc.Diagnostic(
+			callback({ match, range });
+		}
+	}
+
+	async function findAndReportSyntaxErrorFromUri(uri: vsc.Uri) {
+		if (uri.fsPath.endsWith("_bilingual.cqyr.txt") || !uri.fsPath.endsWith(".cqyr.txt")) { return; }
+		const diagnostics: vsc.Diagnostic[] = [];
+		const doc = await vsc.workspace.openTextDocument(uri);
+		const txt = doc.getText().replace(validReg, sub => " ".repeat(sub.length));
+
+		matchAllForDoc({ txt, doc, reg: invalidCharReg, callback: ({ match, range }) => {
+			diagnostics.push(new vsc.Diagnostic(
 				range,
-				`CQYR: 非法字符 "${match[0]}"。\n位于 ${uri.fsPath}:${startPos.line + 1}:${startPos.character + 1}`,
+				`CQYR: 非法字符 "${match[0]}"。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
 				vsc.DiagnosticSeverity.Error
 			));
-		}
-		diagnosticCollection.set(uri, errs);
+		}, });
+
+		matchAllForDoc({ txt, doc, reg: warnQuoteReg, callback: ({ match, range }) => {
+			diagnostics.push(new vsc.Diagnostic(
+				range,
+				`CQYR: 引号不匹配 "${match[0]}"。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
+				vsc.DiagnosticSeverity.Warning
+			));
+		}, });
+
+		diagnosticCollection.set(uri, diagnostics);
 	}
 
 	const updateSyntaxCheckForAllTabGroups = (() => {
