@@ -6,7 +6,7 @@ export interface CqyrSyntaxErr {
 	range: vsc.Range,
 }
 
-const annotationReg = /\{[^\$\}]*?\$[^\$\}]*?\}/g;
+const annotationReg = /\{[^\{\$\}]*?\$[^\{\$\}]*?\}/g;
 const boldReg = /\*\*.*?\*\*/g;
 const IllegalReg = /[\{\$\}]|\*\*/g;
 
