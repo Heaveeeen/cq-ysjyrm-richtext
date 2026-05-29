@@ -3,7 +3,7 @@ import * as vsc from 'vscode';
 // const annotationReg = /\{[^\{\$\}]*?\$[^\{\$\}]*?\}/g;
 // const boldReg = /\*\*.*?\*\*/g;
 // const chineseQuoteReg = /“[^“”]*?”/g;
-const validReg = /(\{[^\{\$\}]*?\$[^\{\$\}]*?\})|(\*\*.*?\*\*)|(“[^“”]*?”)/g;
+const validReg = /(\{[^\{\$\}]*?\$[^\{\$\}]*?\})|(\*\*.*?\*\*)|(“[^“”]*?”)|(‘[^‘’]*?’)/g;
 const invalidCharReg = /[\{\$\}]|\*\*/g;
 const warnQuoteReg = /[“”‘’]/g;
 
