@@ -38,24 +38,6 @@
             "name": "invalid.illegal.bold-delimiter.cqyr"
         },
         {
-            "match": "(“)([^“”]*?)(”)",
-            "captures": {
-                "1": { "name": "keyword.control.chinese-quote.double.begin.cqyr" },
-                "3": { "name": "keyword.control.chinese-quote.double.end.cqyr" }
-            }
-        },
-        {
-            "match": "(‘)([^‘’]*?)(’)",
-            "captures": {
-                "1": { "name": "keyword.control.chinese-quote.single.begin.cqyr" },
-                "3": { "name": "keyword.control.chinese-quote.single.end.cqyr" }
-            }
-        },
-        {
-            "match": "[“”‘’]",
-            "name": "invalid.illegal.chinese-quote.cqyr"
-        },
-        {
             "match": "(?<!https?:)//.*?(//|$)",
             "name": "comment.line.double-slash.cqyr"
         }

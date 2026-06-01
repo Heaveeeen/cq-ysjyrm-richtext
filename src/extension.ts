@@ -6,6 +6,7 @@ import * as vsc from 'vscode';
 const validReg = /(\{[^\{\$\}]*?\$[^\{\$\}]*?\})|(\*\*.*?\*\*)|(“[^“”]*?”)|(‘[^‘’]*?’)/g;
 const invalidCharReg = /[\{\$\}]|\*\*/g;
 const warnQuoteReg = /[“”‘’]/g;
+const warnEnQuoteButNoLetterReg = /("[^\p{Script=Latin}\p{Script=Cyrillic}]+")|('[^\p{Script=Latin}\p{Script=Cyrillic}]+')/gu;
 
 export function activate(context: vsc.ExtensionContext) {
 	const diagnosticCollection = vsc.languages.createDiagnosticCollection();
@@ -42,6 +43,14 @@ export function activate(context: vsc.ExtensionContext) {
 				range,
 				`CQYR: 引号不匹配 "${match[0]}"。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
 				vsc.DiagnosticSeverity.Warning
+			));
+		}, });
+
+		matchAllForDoc({ txt, doc, reg: warnEnQuoteButNoLetterReg, callback: ({ match, range }) => {
+			diagnostics.push(new vsc.Diagnostic(
+				range,
+				`CQYR: 半角引号序列 ${match[0]} 中不包含拉丁字母或西里尔字母。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
+				vsc.DiagnosticSeverity.Information
 			));
 		}, });
 
