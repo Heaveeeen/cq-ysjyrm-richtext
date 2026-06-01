@@ -6,7 +6,8 @@ import * as vsc from 'vscode';
 const validReg = /(\{[^\{\$\}]*?\$[^\{\$\}]*?\})|(\*\*.*?\*\*)|(“[^“”]*?”)|(‘[^‘’]*?’)/g;
 const invalidCharReg = /[\{\$\}]|\*\*/g;
 const warnQuoteReg = /[“”‘’]/g;
-const warnEnQuoteButNoLetterReg = /("[^\p{Script=Latin}\p{Script=Cyrillic}]+")|('[^\p{Script=Latin}\p{Script=Cyrillic}]+')/gu;
+const enQuoteReg = /"(.*?)"|'(.*?)'/g;
+const nonLetterReg = /^[^\p{Script=Latin}\p{Script=Cyrillic}]*$/gu;
 
 export function activate(context: vsc.ExtensionContext) {
 	const diagnosticCollection = vsc.languages.createDiagnosticCollection();
@@ -28,9 +29,10 @@ export function activate(context: vsc.ExtensionContext) {
 		if (uri.fsPath.endsWith("_bilingual.cqyr.txt") || !uri.fsPath.endsWith(".cqyr.txt")) { return; }
 		const diagnostics: vsc.Diagnostic[] = [];
 		const doc = await vsc.workspace.openTextDocument(uri);
-		const txt = doc.getText().replace(validReg, sub => " ".repeat(sub.length));
+		const txt = doc.getText();
+		const nonValidTxt = txt.replace(validReg, sub => " ".repeat(sub.length));
 
-		matchAllForDoc({ txt, doc, reg: invalidCharReg, callback: ({ match, range }) => {
+		matchAllForDoc({ txt: nonValidTxt, doc, reg: invalidCharReg, callback: ({ match, range }) => {
 			diagnostics.push(new vsc.Diagnostic(
 				range,
 				`CQYR: 非法字符 "${match[0]}"。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
@@ -38,7 +40,7 @@ export function activate(context: vsc.ExtensionContext) {
 			));
 		}, });
 
-		matchAllForDoc({ txt, doc, reg: warnQuoteReg, callback: ({ match, range }) => {
+		matchAllForDoc({ txt: nonValidTxt, doc, reg: warnQuoteReg, callback: ({ match, range }) => {
 			diagnostics.push(new vsc.Diagnostic(
 				range,
 				`CQYR: 引号不匹配 "${match[0]}"。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
@@ -46,12 +48,14 @@ export function activate(context: vsc.ExtensionContext) {
 			));
 		}, });
 
-		matchAllForDoc({ txt, doc, reg: warnEnQuoteButNoLetterReg, callback: ({ match, range }) => {
-			diagnostics.push(new vsc.Diagnostic(
-				range,
-				`CQYR: 半角引号序列 ${match[0]} 中不包含拉丁字母或西里尔字母。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
-				vsc.DiagnosticSeverity.Information
-			));
+		matchAllForDoc({ txt, doc, reg: enQuoteReg, callback: ({ match, range }) => {
+			if (nonLetterReg.test(match[1] ?? match[2])) {
+				diagnostics.push(new vsc.Diagnostic(
+					range,
+					`CQYR: 半角引号序列 ${match[0]} 中不包含拉丁字母或西里尔字母。\n位于 ${uri.fsPath}:${range.start.line + 1}:${range.start.character + 1}`,
+					vsc.DiagnosticSeverity.Information
+				));
+			}
 		}, });
 
 		diagnosticCollection.set(uri, diagnostics);
